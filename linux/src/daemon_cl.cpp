@@ -530,6 +530,13 @@ int main(int argc, char **argv)
 		}
 	}
 
+	OSThreadExitCode listenExitCode, linkExitCode;
+	pPort->stopListeningThread();
+	pPort->stopLinkWatchThread();
+	pPort->joinListeningThread(listenExitCode);
+	pPort->joinLinkWatchThread(linkExitCode);
+	GPTP_LOG_INFO("All threads terminated");
+
 	if( ipc ) delete ipc;
 
 	GPTP_LOG_UNREGISTER();

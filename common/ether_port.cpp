@@ -245,7 +245,9 @@ void *EtherPort::openPort( EtherPort *port )
 {
 	port_ready_condition->signal();
 
-	while (1) {
+	setListeningThreadRunning(true);
+
+	while ( getListeningThreadRunning() ) {
 		uint8_t buf[128];
 		LinkLayerAddress remote;
 		net_result rrecv;
@@ -263,7 +265,7 @@ void *EtherPort::openPort( EtherPort *port )
 			break;
 		}
 	}
-
+	GPTP_LOG_DEBUG("Listening thread terminated ...");
 	return NULL;
 }
 

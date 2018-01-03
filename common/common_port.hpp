@@ -339,6 +339,8 @@ private:
 
 	OSThread *listening_thread;
 	OSThread *link_thread;
+	bool listening_thread_running;
+	bool link_thread_running;
 
 	FrequencyRatio _peer_rate_offset;
 	Timestamp _peer_offset_ts_theirs;
@@ -1042,14 +1044,100 @@ public:
 		return net_iface->getPayloadOffset();
 	}
 
+	/**
+	 * @brief Starts link thread
+	 * @return TRUE if ok, FALSE if error
+	 */
 	bool linkWatch( OSThreadFunction func, OSThreadFunctionArg arg )
 	{
 		return link_thread->start( func, arg );
 	}
 
+	/**
+	 * @brief Starts listening thread
+	 * @return TRUE if ok, FALSE if error
+	 */
 	bool linkOpen( OSThreadFunction func, OSThreadFunctionArg arg )
 	{
 		return listening_thread->start( func, arg );
+	}
+
+	/**
+	 * @brief Terminates the thread
+	 * @return void
+	 */
+	void stopLinkWatchThread()
+	{
+		GPTP_LOG_VERBOSE("Stop link watch thread");
+		setLinkThreadRunning(false);
+	}
+
+	/**
+	 * @brief Terminates the thread
+	 * @return void
+	 */
+	void stopListeningThread()
+	{
+		GPTP_LOG_VERBOSE("Stop listening thread");
+		setListeningThreadRunning(false);
+	}
+
+	/**
+	 * @brief Joins terminated thread
+	 * @param exit_code [out]
+	 * @return TRUE if ok, FALSE if error
+	 */
+	bool joinLinkWatchThread( OSThreadExitCode & exit_code )
+	{
+		return link_thread->join( exit_code );
+	}
+
+	/**
+	 * @brief Joins terminated thread
+	 * @param exit_code [out]
+	 * @return TRUE if ok, FALSE if error
+	 */
+	bool joinListeningThread( OSThreadExitCode & exit_code )
+	{
+		return listening_thread->join( exit_code );
+	}
+
+	/**
+	 * @brief Sets the listeningThreadRunning flag
+	 * @param state value to be set
+	 * @return void
+	 */
+	void setListeningThreadRunning(bool state)
+	{
+		listening_thread_running = state;
+	}
+
+	/**
+	 * @brief Gets the listeningThreadRunning flag
+	 * @return TRUE if running, FALSE if stopped
+	 */
+	bool getListeningThreadRunning()
+	{
+		return listening_thread_running;
+	}
+
+	/**
+	 * @brief Sets the linkThreadRunning flag
+	 * @param state value to be set
+	 * @return void
+	 */
+	void setLinkThreadRunning(bool state)
+	{
+		link_thread_running = state;
+	}
+
+	/**
+	 * @brief Gets the linkThreadRunning flag
+	 * @return TRUE if running, FALSE if stopped
+	 */
+	bool getLinkThreadRunning()
+	{
+		return link_thread_running;
 	}
 
 	/**
