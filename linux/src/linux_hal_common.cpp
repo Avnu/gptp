@@ -363,13 +363,16 @@ void LinuxNetworkInterface::watchNetLink( CommonPort *iPort )
 		pPort->setLinkSpeed( INVALID_LINKSPEED );
 	}
 
-	while (1) {
+	pPort->setLinkThreadRunning(true);
+
+	while ( pPort->getLinkThreadRunning() ) {
 		FD_ZERO(&netLinkFD);
 		FD_CLR(netLinkSocket, &netLinkFD);
 		FD_SET(netLinkSocket, &netLinkFD);
 
-		// Wait forever for a net link event
-		int retval = select(FD_SETSIZE, &netLinkFD, NULL, NULL, NULL);
+		// Wait for a net link event
+		struct timeval timeout = { 0, 250000 }; // 250 ms
+		int retval = select(FD_SETSIZE, &netLinkFD, NULL, NULL, &timeout);
 		if (retval == -1)
 			; // Error on select. We will ignore and keep going
 		else if (retval) {
@@ -390,9 +393,10 @@ void LinuxNetworkInterface::watchNetLink( CommonPort *iPort )
 			}
 		}
 		else {
-			; // Would be timeout but Won't happen because we wait forever
+			GPTP_LOG_VERBOSE("Net link event timeout");
 		}
 	}
+	GPTP_LOG_DEBUG("Link watch thread terminated ...");
 }
 
 

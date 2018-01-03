@@ -546,7 +546,7 @@ class LinuxThread : public OSThread {
 	virtual bool start(OSThreadFunction function, void *arg);
 
 	/**
-	 * @brief  Joins a new thread
+	 * @brief  Joins terminated thread
 	 * @param  exit_code Callback's return code
 	 * @return TRUE if ok, FALSE if error.
 	 */
