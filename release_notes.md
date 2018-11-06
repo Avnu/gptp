@@ -1,4 +1,4 @@
-# Version v1.0
+# Version v1.0.0
 
 ## Release notes
 gptp first release after separating gptp repo from OpenAvnu project.
