@@ -255,7 +255,10 @@ public:
 	 * the private parameters
 	 */
 	Timestamp() {
-		Timestamp( 0, 0, 0 );
+		nanoseconds = 0;
+		seconds_ls = 0;
+		seconds_ms = 0;
+		_version = INVALID_TIMESTAMP_VERSION;
 	}
 	uint32_t nanoseconds;	//!< 32 bit nanoseconds value
 	uint32_t seconds_ls;	//!< 32 bit seconds LSB value
