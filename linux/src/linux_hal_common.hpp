@@ -50,7 +50,8 @@
 #include <list>
 
 #define ONE_WAY_PHY_DELAY 400	/*!< One way phy delay. TX or RX phy delay default value*/
-#define P8021AS_MULTICAST "\x01\x80\xC2\x00\x00\x0E"	/*!< Default multicast address*/
+#define P8021AS_MULTICAST "\x01\x80\xC2\x00\x00\x0E"	/*!< Default IEEE 802.1AS multicast address*/
+#define IEEE_1588_MULTICAST "\x01\x1B\x19\x00\x00\x00"	/*!< Default IEEE 1588-2008 multicast address*/
 #define PTP_DEVICE "/dev/ptpXX"			/*!< Default PTP device */
 #define PTP_DEVICE_IDX_OFFS 8			/*!< PTP device index offset*/
 #define CLOCKFD 3						/*!< Clock file descriptor */

@@ -129,18 +129,26 @@ void LinuxNetworkInterface::disable_rx_queue() {
 	mr_8021as.mr_ifindex = ifindex;
 	mr_8021as.mr_type = PACKET_MR_MULTICAST;
 	mr_8021as.mr_alen = 6;
+
 	memcpy( mr_8021as.mr_address, P8021AS_MULTICAST, mr_8021as.mr_alen );
 	err = setsockopt
 		( sd_event, SOL_PACKET, PACKET_DROP_MEMBERSHIP, &mr_8021as,
 		  sizeof( mr_8021as ));
 	if( err == -1 ) {
 		GPTP_LOG_ERROR
-			( "Unable to add PTP multicast addresses to port id: %u",
+			( "Unable to drop IEEE 802.1AS PTP multicast addresses from port id: %u",
 			  ifindex );
-		return;
 	}
 
-	return;
+	memcpy( mr_8021as.mr_address, IEEE_1588_MULTICAST, mr_8021as.mr_alen );
+	err = setsockopt
+		( sd_event, SOL_PACKET, PACKET_DROP_MEMBERSHIP, &mr_8021as,
+		  sizeof( mr_8021as ));
+	if( err == -1 ) {
+		GPTP_LOG_ERROR
+			( "Unable to drop IEEE 1588 PTP multicast addresses from port id: %u",
+			  ifindex );
+	}
 }
 
 void LinuxNetworkInterface::clear_reenable_rx_queue() {
@@ -154,15 +162,25 @@ void LinuxNetworkInterface::clear_reenable_rx_queue() {
 	mr_8021as.mr_ifindex = ifindex;
 	mr_8021as.mr_type = PACKET_MR_MULTICAST;
 	mr_8021as.mr_alen = 6;
+
 	memcpy( mr_8021as.mr_address, P8021AS_MULTICAST, mr_8021as.mr_alen );
 	err = setsockopt
 		( sd_event, SOL_PACKET, PACKET_ADD_MEMBERSHIP, &mr_8021as,
 		  sizeof( mr_8021as ));
 	if( err == -1 ) {
 		GPTP_LOG_ERROR
-			( "Unable to add PTP multicast addresses to port id: %u",
+			( "Unable to add IEEE 802.1AS PTP multicast addresses to port id: %u",
 			  ifindex );
-		return;
+	}
+
+	memcpy( mr_8021as.mr_address, IEEE_1588_MULTICAST, mr_8021as.mr_alen );
+	err = setsockopt
+		( sd_event, SOL_PACKET, PACKET_ADD_MEMBERSHIP, &mr_8021as,
+		  sizeof( mr_8021as ));
+	if( err == -1 ) {
+		GPTP_LOG_ERROR
+			( "Unable to add IEEE 1588 PTP multicast addresses to port id: %u",
+			  ifindex );
 	}
 
 	if( !net_lock.unlock() ) {
@@ -1073,17 +1091,30 @@ bool LinuxNetworkInterfaceFactory::createInterface
 	}
 	ifindex = device.ifr_ifindex;
 	net_iface_l->ifindex = ifindex;
+
 	memset( &mr_8021as, 0, sizeof( mr_8021as ));
 	mr_8021as.mr_ifindex = ifindex;
 	mr_8021as.mr_type = PACKET_MR_MULTICAST;
 	mr_8021as.mr_alen = 6;
+
 	memcpy( mr_8021as.mr_address, P8021AS_MULTICAST, mr_8021as.mr_alen );
 	err = setsockopt
 		( net_iface_l->sd_event, SOL_PACKET, PACKET_ADD_MEMBERSHIP,
 		  &mr_8021as, sizeof( mr_8021as ));
 	if( err == -1 ) {
 		GPTP_LOG_ERROR
-			( "Unable to add PTP multicast addresses to port id: %u",
+			( "Unable to add IEEE 802.1AS PTP multicast addresses to port id: %u",
+			  ifindex );
+		return false;
+	}
+
+	memcpy( mr_8021as.mr_address, IEEE_1588_MULTICAST, mr_8021as.mr_alen );
+	err = setsockopt
+		( net_iface_l->sd_event, SOL_PACKET, PACKET_ADD_MEMBERSHIP,
+		  &mr_8021as, sizeof( mr_8021as ));
+	if( err == -1 ) {
+		GPTP_LOG_ERROR
+			( "Unable to add IEEE 1588 PTP multicast addresses to port id: %u",
 			  ifindex );
 		return false;
 	}
