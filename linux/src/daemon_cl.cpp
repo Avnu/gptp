@@ -73,7 +73,7 @@ void print_usage( char *arg0 ) {
 			"%s <network interface> [-S] [-P] [-M <filename>] "
 			"[-G <group>] [-R <priority 1>] "
 			"[-D <gb_tx_delay,gb_rx_delay,mb_tx_delay,mb_rx_delay>] "
-			"[-T] [-L] [-E] [-GM] [-INITSYNC <value>] [-OPERSYNC <value>] "
+			"[-T] [-L] [-E] [-GM] [-N] [-INITSYNC <value>] [-OPERSYNC <value>] "
 			"[-INITPDELAY <value>] [-OPERPDELAY <value>] "
 			"[-F <path to gptp_cfg.ini file>] "
 			"\n",
@@ -90,6 +90,7 @@ void print_usage( char *arg0 ) {
 		  "\t-L force slave (ignored when Automotive Profile set)\n"
 		  "\t-E enable test mode (as defined in AVnu automotive profile)\n"
 		  "\t-V enable AVnu Automotive Profile\n"
+		  "\t-N allow processing SyncFollowUp with negative correction field\n"
 		  "\t-GM set grandmaster for Automotive Profile\n"
 		  "\t-INITSYNC <value> initial sync interval (Log base 2. 0 = 1 second)\n"
 		  "\t-OPERSYNC <value> operational sync interval (Log base 2. 0 = 1 second)\n"
@@ -183,6 +184,7 @@ int main(int argc, char **argv)
 	portInit.isGM = false;
 	portInit.testMode = false;
 	portInit.linkUp = false;
+	portInit.allowNegativeCorrField = false;
 	portInit.initialLogSyncInterval = LOG2_INTERVAL_INVALID;
 	portInit.initialLogPdelayReqInterval = LOG2_INTERVAL_INVALID;
 	portInit.operLogPdelayReqInterval = LOG2_INTERVAL_INVALID;
@@ -310,6 +312,9 @@ int main(int argc, char **argv)
 			else if (strcmp(argv[i] + 1, "E") == 0) {
 				portInit.testMode = true;
 			}
+			else if (strcmp(argv[i] + 1, "N") == 0) {
+				portInit.allowNegativeCorrField = true;
+			}
 			else if (strcmp(argv[i] + 1, "INITSYNC") == 0) {
 				portInit.initialLogSyncInterval = atoi(argv[++i]);
 			}
@@ -429,6 +434,10 @@ int main(int argc, char **argv)
 			{
 				ether_phy_delay = iniParser.getPhyDelay();
 			}
+
+			portInit.allowNegativeCorrField = iniParser.getAllowNegativeCorrField();
+			GPTP_LOG_INFO("SyncFollowUp with negative correction field: %s",
+						  portInit.allowNegativeCorrField ? "permitted" : "forbiden");
 		}
 
 	}

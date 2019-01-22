@@ -76,6 +76,7 @@ class GptpIniParser
             unsigned int seqIdAsCapableThresh;
             uint16_t lostPdelayRespThresh;
             PortState port_state;
+            bool allowNegativeCorrField;
 
             /*ethernet adapter data set*/
 	    std::string ifname;
@@ -150,6 +151,15 @@ class GptpIniParser
         unsigned int getSyncReceiptThresh(void)
         {
             return _config.syncReceiptThresh;
+        }
+
+        /**
+         * @brief  Reads the allowNegativeCorrectionField flag from the configuration file
+         * @return allowNegativeCorrectionField from the .ini file
+         */
+        bool getAllowNegativeCorrField(void)
+        {
+            return _config.allowNegativeCorrField;
         }
 
 	/**

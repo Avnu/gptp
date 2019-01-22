@@ -1049,6 +1049,20 @@ void PTPMessageFollowUp::processMessage
 	master_local_freq_offset /= port->getPeerRateOffset();
 
 	correctionField /= 1 << 16;
+	if( correctionField < 0 )
+	{
+		if( port->getAllowNegativeCorrField() )
+		{
+			GPTP_LOG_WARNING
+					( "Received Follow Up with negative correctionField: %Ld", correctionField );
+		}
+		else
+		{
+			GPTP_LOG_EXCEPTION
+					( "Discard received Follow Up with negative correctionField: %Ld", correctionField );
+			goto done;
+		}
+	}
 	correction = (int64_t)
 		((delay * master_local_freq_offset) + correctionField);
 

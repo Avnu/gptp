@@ -268,6 +268,10 @@ typedef struct {
 
 	/* neighbor delay threshold */
 	int64_t neighborPropDelayThreshold;
+
+	/* Allow processing SyncFollowUp with
+	 * negative correction field */
+	bool allowNegativeCorrField;
 } PortInit_t;
 
 
@@ -321,6 +325,7 @@ private:
 	PortState port_state;
 	bool testMode;
 	bool automotive_profile;
+	bool allow_negative_correction_field;
 
 	signed char log_mean_sync_interval;
 	signed char log_mean_announce_interval;
@@ -1455,6 +1460,16 @@ public:
 	 * @brief Returns RX PHY delay
 	 */
 	Timestamp getRxPhyDelay( uint32_t link_speed ) const;
+
+	/**
+	* @brief Gets the permission flag for processing SyncFollowUp
+	* messages with negative correction field
+	* @return allow_negative_correction_field flag
+	*/
+	bool getAllowNegativeCorrField( void )
+	{
+		return( allow_negative_correction_field );
+	}
 };
 
 /**

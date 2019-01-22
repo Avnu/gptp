@@ -148,6 +148,16 @@ int GptpIniParser::iniCallBack(void *user, const char *section, const char *name
                 parser->_config.lostPdelayRespThresh = lostpdelayth;
             }
         }
+        else if( parseMatch( name, "allowNegativeCorrectionField") )
+        {
+            errno = 0;
+            char *pEnd;
+            unsigned int allowNegCF = strtoul(value, &pEnd, 10);
+            if( *pEnd == '\0' && errno == 0 && (allowNegCF == 0 || allowNegCF == 1) ) {
+                valOK = true;
+                parser->_config.allowNegativeCorrField = (allowNegCF == 1);
+            }
+        }
     }
     else if( parseMatch(section, "eth") )
     {
