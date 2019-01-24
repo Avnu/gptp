@@ -585,8 +585,8 @@ unsigned long LinuxTimer::sleep(unsigned long micros) {
 		ret = nanosleep( &req, &rem );
 	}
 	if( ret == -1 ) {
-		fprintf
-			( stderr, "Error calling nanosleep: %s\n", strerror( errno ));
+		GPTP_LOG_ERROR
+			("Error calling nanosleep: %s", strerror( errno ));
 		_exit(-1);
 	}
 	return micros;
@@ -723,7 +723,7 @@ OSLockResult LinuxLock::lock() {
 	int lock_c;
 	lock_c = pthread_mutex_lock(&_private->mutex);
 	if(lock_c != 0) {
-		fprintf( stderr, "LinuxLock: lock failed %d\n", lock_c );
+		GPTP_LOG_ERROR("LinuxLock: lock failed %d", lock_c);
 		return oslock_fail;
 	}
 	return oslock_ok;
@@ -740,7 +740,7 @@ OSLockResult LinuxLock::unlock() {
 	int lock_c;
 	lock_c = pthread_mutex_unlock(&_private->mutex);
 	if(lock_c != 0) {
-		fprintf( stderr, "LinuxLock: unlock failed %d\n", lock_c );
+		GPTP_LOG_ERROR("LinuxLock: unlock failed %d", lock_c);
 		return oslock_fail;
 	}
 	return oslock_ok;
