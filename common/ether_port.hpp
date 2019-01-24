@@ -100,7 +100,7 @@ class EtherPort : public CommonPort
 
 	/* Automotive Profile : Static variables */
 	// port_state : already defined as port_state
-	bool isGM;
+	// isGM : already defined as isGM;
 	// asCapable : already defined as asCapable
 	signed char operLogPdelayReqInterval;
 	signed char operLogSyncInterval;
