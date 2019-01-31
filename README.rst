@@ -1,3 +1,6 @@
+.. image:: https://api.travis-ci.org/AVnu/gptp.svg?branch=master
+   :target: https://travis-ci.org/AVnu/gptp
+
 Introduction
 ------------
 This is an example Intel provided gptp daemon which can be used on Linux
