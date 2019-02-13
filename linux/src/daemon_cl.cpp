@@ -437,7 +437,7 @@ int main(int argc, char **argv)
 
 			portInit.allowNegativeCorrField = iniParser.getAllowNegativeCorrField();
 			GPTP_LOG_INFO("SyncFollowUp with negative correction field: %s",
-						  portInit.allowNegativeCorrField ? "permitted" : "forbiden");
+						  portInit.allowNegativeCorrField ? "permitted" : "forbidden");
 		}
 
 	}
