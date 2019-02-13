@@ -1053,12 +1053,12 @@ void PTPMessageFollowUp::processMessage
 	{
 		if( port->getAllowNegativeCorrField() )
 		{
-			GPTP_LOG_WARNING
+			GPTP_LOG_INFO
 					( "Received Follow Up with negative correctionField: %Ld", correctionField );
 		}
 		else
 		{
-			GPTP_LOG_EXCEPTION
+			GPTP_LOG_ERROR
 					( "Discard received Follow Up with negative correctionField: %Ld", correctionField );
 			goto done;
 		}
