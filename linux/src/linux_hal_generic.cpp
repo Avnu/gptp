@@ -59,9 +59,9 @@ net_result LinuxNetworkInterface::nrecv
 	int err;
 	struct msghdr msg;
 	struct cmsghdr *cmsg;
-	struct {
+	union {
 		struct cmsghdr cm;
-		char control[256];
+		char control_data[CMSG_SPACE(256)];
 	} control;
 	struct sockaddr_ll remote;
 	struct iovec sgentry;
@@ -290,9 +290,9 @@ int LinuxTimestamperGeneric::HWTimestamper_txtimestamp
 	uint8_t reflected_bytes[ETHER_HDR_LEN + PTP_COMMON_HDR_LENGTH];
 	uint8_t *gptpCommonHeader;
 	uint16_t sequenceId;
-	struct {
+	union {
 		struct cmsghdr cm;
-		char control[256];
+		char control_data[CMSG_SPACE(256)];
 	} control;
 
     if( sd == -1 ) return -1;
