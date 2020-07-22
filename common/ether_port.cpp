@@ -323,7 +323,7 @@ void EtherPort::sendGeneralPort
 
 bool EtherPort::_processEvent( Event e )
 {
-	bool ret;
+	bool ret = false;
 
 	switch (e) {
 	case POWERUP:
