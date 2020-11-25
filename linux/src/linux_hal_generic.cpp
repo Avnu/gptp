@@ -163,19 +163,22 @@ net_result LinuxNetworkInterface::nrecv
 
 int findPhcIndex( InterfaceLabel *iface_label ) {
 	int sd;
+	int ret;
 	InterfaceName *ifname;
 	struct ethtool_ts_info info;
 	struct ifreq ifr;
 
 	if(( ifname = dynamic_cast<InterfaceName *>(iface_label)) == NULL ) {
 		GPTP_LOG_ERROR("findPTPIndex requires InterfaceName");
-		return -1;
+		ret = -1;
+		goto done;
 	}
 
 	sd = socket( AF_UNIX, SOCK_DGRAM, 0 );
 	if( sd < 0 ) {
 		GPTP_LOG_ERROR("findPTPIndex: failed to open socket");
-		return -1;
+		ret = -1;
+		goto done;
 	}
 
 	memset( &ifr, 0, sizeof(ifr));
@@ -186,12 +189,13 @@ int findPhcIndex( InterfaceLabel *iface_label ) {
 
 	if( ioctl( sd, SIOCETHTOOL, &ifr ) < 0 ) {
 		GPTP_LOG_ERROR("findPTPIndex: ioctl(SIOETHTOOL) failed");
-		return -1;
+		ret = -1;
+	} else {
+		ret = info.phc_index;
 	}
-
 	close(sd);
-
-	return info.phc_index;
+done:
+	return ret;
 }
 
 LinuxTimestamperGeneric::~LinuxTimestamperGeneric() {
