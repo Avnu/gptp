@@ -1571,8 +1571,8 @@ PTPMessagePathDelayRespFollowUp::~PTPMessagePathDelayRespFollowUp()
 void PTPMessagePathDelayRespFollowUp::processMessage
 ( CommonPort *port )
 {
-	PTPMessagePathDelayReq *req;
-	PTPMessagePathDelayResp *resp;
+	PTPMessagePathDelayReq *req = NULL;
+	PTPMessagePathDelayResp *resp = NULL;
 
 	Timestamp remote_resp_tx_timestamp(0, 0, 0);
 	Timestamp request_tx_timestamp(0, 0, 0);
