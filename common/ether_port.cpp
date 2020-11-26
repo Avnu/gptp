@@ -43,6 +43,7 @@
 #include <ether_tstamper.hpp>
 
 #include <gptp_log.hpp>
+#include <gptp_cfg.hpp>
 
 #include <stdio.h>
 
@@ -301,6 +302,7 @@ void EtherPort::sendEventPort
 	if( rtx != net_succeed )
 	{
 		GPTP_LOG_ERROR("sendEventPort(): failure");
+		*link_speed = INVALID_LINKSPEED;
 		return;
 	}
 
