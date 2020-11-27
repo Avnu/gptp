@@ -312,6 +312,7 @@ void LinuxNetworkInterface::watchNetLink( CommonPort *iPort )
 	int netLinkSocket;
 	int inetSocket;
 	struct sockaddr_nl addr;
+	uint32_t link_speed = INVALID_LINKSPEED;
 
 	EtherPort *pPort =
 		dynamic_cast<EtherPort *>(iPort);
@@ -353,15 +354,12 @@ void LinuxNetworkInterface::watchNetLink( CommonPort *iPort )
 	}
 
 	x_initLinkUpStatus(pPort, ifindex);
+
 	if( pPort->getLinkUpState() )
 	{
-		uint32_t link_speed;
 		getLinkSpeed( inetSocket, &link_speed );
-		pPort->setLinkSpeed((int32_t) link_speed );
-	} else
-	{
-		pPort->setLinkSpeed( INVALID_LINKSPEED );
 	}
+	pPort->setLinkSpeed( link_speed );
 
 	pPort->setLinkThreadRunning(true);
 
@@ -382,15 +380,15 @@ void LinuxNetworkInterface::watchNetLink( CommonPort *iPort )
 			// Don't do anything else if link state is the same
 			if( prev_link_up == pPort->getLinkUpState() )
 				continue;
+
 			if( pPort->getLinkUpState() )
 			{
-				uint32_t link_speed;
-				getLinkSpeed( inetSocket, &link_speed );
-				pPort->setLinkSpeed((int32_t) link_speed );
-			} else
-			{
-				pPort->setLinkSpeed( INVALID_LINKSPEED );
+				if ( !getLinkSpeed( inetSocket, &link_speed ) )
+				{
+					link_speed = INVALID_LINKSPEED;
+				}
 			}
+			pPort->setLinkSpeed( link_speed );
 		}
 		else {
 			GPTP_LOG_VERBOSE("Net link event timeout");
