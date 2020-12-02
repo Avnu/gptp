@@ -299,8 +299,9 @@ int LinuxTimestamperGeneric::HWTimestamper_txtimestamp
 		char control_data[CMSG_SPACE(256)];
 	} control;
 
-    if( sd == -1 ) return -1;
+	if( sd == -1 ) return -1;
 	memset( &msg, 0, sizeof( msg ));
+	memset( reflected_bytes, 0, sizeof( reflected_bytes ));
 
 	msg.msg_iov = &sgentry;
 	msg.msg_iovlen = 1;
