@@ -181,6 +181,8 @@ static void x_readEvent
 	struct nlmsghdr *msgHdr;
 	struct ifinfomsg *ifi;
 
+	memset(buf, 0, sizeof(buf));
+
 	status = recvmsg(sockint, &msg, 0);
 
 	if (status < 0) {
