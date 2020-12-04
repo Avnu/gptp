@@ -402,6 +402,7 @@ void LinuxNetworkInterface::watchNetLink( CommonPort *iPort )
 
 struct LinuxTimerQueuePrivate {
 	pthread_t signal_thread;
+	bool thread_id_valid;
 };
 
 struct LinuxTimerQueueActionArg {
@@ -414,14 +415,22 @@ struct LinuxTimerQueueActionArg {
 };
 
 LinuxTimerQueue::~LinuxTimerQueue() {
-	pthread_join(_private->signal_thread,NULL);
-	if( _private != NULL ) delete _private;
+
+	if( _private != NULL ) {
+
+		if ( _private->thread_id_valid ) {
+			pthread_join(_private->signal_thread, NULL);
+		}
+		delete _private;
+	}
 }
 
 bool LinuxTimerQueue::init() {
 	_private = new LinuxTimerQueuePrivate;
+
 	if( _private == NULL ) return false;
 
+	_private->thread_id_valid = false;
 	return true;
 }
 
@@ -480,6 +489,7 @@ OSTimerQueue *LinuxTimerQueueFactory::createOSTimerQueue
 	LinuxTimerQueue *ret = new LinuxTimerQueue();
 
 	if( !ret->init() ) {
+		delete ret;
 		return NULL;
 	}
 
@@ -492,7 +502,7 @@ OSTimerQueue *LinuxTimerQueueFactory::createOSTimerQueue
 		delete ret;
 		return NULL;
 	}
-
+	ret->_private->thread_id_valid = true;
 	return ret;
 }
 
