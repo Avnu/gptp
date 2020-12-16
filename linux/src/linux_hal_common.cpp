@@ -181,6 +181,8 @@ static void x_readEvent
 	struct nlmsghdr *msgHdr;
 	struct ifinfomsg *ifi;
 
+	memset(buf, 0, sizeof(buf));
+
 	status = recvmsg(sockint, &msg, 0);
 
 	if (status < 0) {
@@ -312,6 +314,7 @@ void LinuxNetworkInterface::watchNetLink( CommonPort *iPort )
 	int netLinkSocket;
 	int inetSocket;
 	struct sockaddr_nl addr;
+	uint32_t link_speed = INVALID_LINKSPEED;
 
 	EtherPort *pPort =
 		dynamic_cast<EtherPort *>(iPort);
@@ -353,15 +356,12 @@ void LinuxNetworkInterface::watchNetLink( CommonPort *iPort )
 	}
 
 	x_initLinkUpStatus(pPort, ifindex);
+
 	if( pPort->getLinkUpState() )
 	{
-		uint32_t link_speed;
 		getLinkSpeed( inetSocket, &link_speed );
-		pPort->setLinkSpeed((int32_t) link_speed );
-	} else
-	{
-		pPort->setLinkSpeed( INVALID_LINKSPEED );
 	}
+	pPort->setLinkSpeed( link_speed );
 
 	pPort->setLinkThreadRunning(true);
 
@@ -382,15 +382,15 @@ void LinuxNetworkInterface::watchNetLink( CommonPort *iPort )
 			// Don't do anything else if link state is the same
 			if( prev_link_up == pPort->getLinkUpState() )
 				continue;
+
 			if( pPort->getLinkUpState() )
 			{
-				uint32_t link_speed;
-				getLinkSpeed( inetSocket, &link_speed );
-				pPort->setLinkSpeed((int32_t) link_speed );
-			} else
-			{
-				pPort->setLinkSpeed( INVALID_LINKSPEED );
+				if ( !getLinkSpeed( inetSocket, &link_speed ) )
+				{
+					link_speed = INVALID_LINKSPEED;
+				}
 			}
+			pPort->setLinkSpeed( link_speed );
 		}
 		else {
 			GPTP_LOG_VERBOSE("Net link event timeout");
@@ -402,6 +402,7 @@ void LinuxNetworkInterface::watchNetLink( CommonPort *iPort )
 
 struct LinuxTimerQueuePrivate {
 	pthread_t signal_thread;
+	bool thread_id_valid;
 };
 
 struct LinuxTimerQueueActionArg {
@@ -414,14 +415,22 @@ struct LinuxTimerQueueActionArg {
 };
 
 LinuxTimerQueue::~LinuxTimerQueue() {
-	pthread_join(_private->signal_thread,NULL);
-	if( _private != NULL ) delete _private;
+
+	if( _private != NULL ) {
+
+		if ( _private->thread_id_valid ) {
+			pthread_join(_private->signal_thread, NULL);
+		}
+		delete _private;
+	}
 }
 
 bool LinuxTimerQueue::init() {
 	_private = new LinuxTimerQueuePrivate;
+
 	if( _private == NULL ) return false;
 
+	_private->thread_id_valid = false;
 	return true;
 }
 
@@ -480,6 +489,7 @@ OSTimerQueue *LinuxTimerQueueFactory::createOSTimerQueue
 	LinuxTimerQueue *ret = new LinuxTimerQueue();
 
 	if( !ret->init() ) {
+		delete ret;
 		return NULL;
 	}
 
@@ -492,7 +502,7 @@ OSTimerQueue *LinuxTimerQueueFactory::createOSTimerQueue
 		delete ret;
 		return NULL;
 	}
-
+	ret->_private->thread_id_valid = true;
 	return ret;
 }
 

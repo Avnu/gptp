@@ -116,9 +116,11 @@ int watchdog_setup(OSThreadFactory *thread_factory)
 		return 0;
 	} else if (watchdog_result < 0) {
 		GPTP_LOG_ERROR("Watchdog settings read error.");
+		delete watchdog;
 		return -1;
 	} else {
 		GPTP_LOG_STATUS("Watchdog disabled");
+		delete watchdog;
 		return 0;
 	}
 #else
