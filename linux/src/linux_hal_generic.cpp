@@ -60,8 +60,8 @@ net_result LinuxNetworkInterface::nrecv
 	struct msghdr msg;
 	struct cmsghdr *cmsg;
 	union {
-		struct cmsghdr cm;
 		char control_data[CMSG_SPACE(256)];
+		struct cmsghdr cm;
 	} control;
 	struct sockaddr_ll remote;
 	struct iovec sgentry;
@@ -291,8 +291,8 @@ int LinuxTimestamperGeneric::HWTimestamper_txtimestamp
 	uint8_t *gptpCommonHeader;
 	uint16_t sequenceId;
 	union {
-		struct cmsghdr cm;
 		char control_data[CMSG_SPACE(256)];
+		struct cmsghdr cm;
 	} control;
 
     if( sd == -1 ) return -1;
