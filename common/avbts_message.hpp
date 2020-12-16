@@ -745,9 +745,9 @@ class FollowUpTLV {
 	FollowUpTLV() {
 		tlvType = PLAT_htons(0x3);
 		lengthField = PLAT_htons(28);
-		organizationId[0] = '\x00';
-		organizationId[1] = '\x80';
-		organizationId[2] = '\xC2';
+		organizationId[0] = 0x00;
+		organizationId[1] = 0x80;
+		organizationId[2] = 0xC2;
 		organizationSubType_ms = 0;
 		organizationSubType_ls = PLAT_htons(1);
 		cumulativeScaledRateOffset = PLAT_htonl(0);
@@ -1138,9 +1138,9 @@ class SignallingTLV {
 	SignallingTLV() {
 		tlvType = PLAT_htons(0x3);
 		lengthField = PLAT_htons(12);
-		organizationId[0] = '\x00';
-		organizationId[1] = '\x80';
-		organizationId[2] = '\xC2';
+		organizationId[0] = 0x00;
+		organizationId[1] = 0x80;
+		organizationId[2] = 0xC2;
 		organizationSubType_ms = 0;
 		organizationSubType_ls = PLAT_htons(2);
 		linkDelayInterval = 0;
