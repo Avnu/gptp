@@ -79,8 +79,8 @@ Timestamp tsToTimestamp(struct timespec *ts)
 }
 
 LinuxNetworkInterface::~LinuxNetworkInterface() {
-	close( sd_event );
-	close( sd_general );
+	if ( sd_event != -1 ) close( sd_event );
+	if ( sd_general != -1 ) close( sd_general );
 }
 
 net_result LinuxNetworkInterface::send
@@ -1045,27 +1045,27 @@ bool LinuxNetworkInterfaceFactory::createInterface
 
 	LinuxNetworkInterface *net_iface_l = new LinuxNetworkInterface();
 
-	if( !net_iface_l->net_lock.init()) {
-		GPTP_LOG_ERROR( "Failed to initialize network lock");
-		return false;
-	}
-
 	InterfaceName *ifname = dynamic_cast<InterfaceName *>(label);
 	if( ifname == NULL ){
 		GPTP_LOG_ERROR( "ifname == NULL");
-		return false;
+		goto exit_error;
+	}
+
+	if( !net_iface_l->net_lock.init()) {
+		GPTP_LOG_ERROR( "Failed to initialize network lock");
+		goto exit_error;
 	}
 
 	net_iface_l->sd_general = socket( PF_PACKET, SOCK_DGRAM, 0 );
 	if( net_iface_l->sd_general == -1 ) {
 		GPTP_LOG_ERROR( "failed to open general socket: %s", strerror(errno));
-		return false;
+		goto exit_error;
 	}
 	net_iface_l->sd_event = socket( PF_PACKET, SOCK_DGRAM, 0 );
 	if( net_iface_l->sd_event == -1 ) {
 		GPTP_LOG_ERROR
 			( "failed to open event socket: %s ", strerror(errno));
-		return false;
+		goto exit_error;
 	}
 
 	memset( &device, 0, sizeof(device));
@@ -1074,7 +1074,7 @@ bool LinuxNetworkInterfaceFactory::createInterface
 	if( err == -1 ) {
 		GPTP_LOG_ERROR
 			( "Failed to get interface address: %s", strerror( errno ));
-		return false;
+		goto exit_error;
 	}
 
 	addr = LinkLayerAddress( (uint8_t *)&device.ifr_hwaddr.sa_data );
@@ -1083,7 +1083,7 @@ bool LinuxNetworkInterfaceFactory::createInterface
 	if( err == -1 ) {
 		GPTP_LOG_ERROR
 			( "Failed to get interface index: %s", strerror( errno ));
-		return false;
+		goto exit_error;
 	}
 	ifindex = device.ifr_ifindex;
 	net_iface_l->ifindex = ifindex;
@@ -1099,7 +1099,7 @@ bool LinuxNetworkInterfaceFactory::createInterface
 		GPTP_LOG_ERROR
 			( "Unable to add PTP multicast addresses to port id: %u",
 			  ifindex );
-		return false;
+		goto exit_error;
 	}
 
 	memset( &ifsock_addr, 0, sizeof( ifsock_addr ));
@@ -1111,21 +1111,24 @@ bool LinuxNetworkInterfaceFactory::createInterface
 		  sizeof( ifsock_addr ));
 	if( err == -1 ) {
 		GPTP_LOG_ERROR( "Call to bind() failed: %s", strerror(errno) );
-		return false;
+		goto exit_error;
 	}
 
 	net_iface_l->timestamper =
 		dynamic_cast <LinuxTimestamper *>(timestamper);
 	if(net_iface_l->timestamper == NULL) {
 		GPTP_LOG_ERROR( "timestamper == NULL" );
-		return false;
+		goto exit_error;
 	}
 	if( !net_iface_l->timestamper->post_init
 		( ifindex, net_iface_l->sd_event, &net_iface_l->net_lock )) {
 		GPTP_LOG_ERROR( "post_init failed\n" );
-		return false;
+		goto exit_error;
 	}
 	*net_iface = net_iface_l;
-
 	return true;
+
+exit_error:
+	delete net_iface_l;
+	return false;
 }

@@ -231,7 +231,10 @@ protected:
 	/**
 	 * @brief Default constructor
 	 */
-	LinuxNetworkInterface() {};
+	LinuxNetworkInterface() {
+		sd_event = -1;
+		sd_general = -1;
+	}
 };
 
 /**
