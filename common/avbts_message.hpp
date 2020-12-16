@@ -1126,9 +1126,9 @@ class SignallingTLV {
 	uint8_t organizationId[3];
 	uint8_t organizationSubType_ms;
 	uint16_t organizationSubType_ls;
-	uint8_t linkDelayInterval;
-	uint8_t timeSyncInterval;
-	uint8_t announceInterval;
+	int8_t linkDelayInterval;
+	int8_t timeSyncInterval;
+	int8_t announceInterval;
 	uint8_t flags;
 	uint16_t reserved;
  public:
