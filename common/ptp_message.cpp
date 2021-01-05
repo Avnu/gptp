@@ -1582,9 +1582,9 @@ void PTPMessagePathDelayRespFollowUp::processMessage
 	EtherPort *eport = dynamic_cast <EtherPort *> (port);
 	if (eport == NULL)
 	{
-		GPTP_LOG_ERROR( "Received Pdelay Response FollowUp on wrong "
-				"port type" );
-		goto abort;
+		GPTP_LOG_ERROR( "Received Pdelay Response FollowUp on wrong port type" );
+		_gc = true;
+		return;
 	}
 
 	if (port->getPortState() == PTP_DISABLED) {
