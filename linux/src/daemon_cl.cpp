@@ -58,7 +58,7 @@
 #include <string.h>
 
 #ifdef SYSTEMD_WATCHDOG
-#include <watchdog.hpp>
+#include "watchdog.hpp"
 #endif
 
 #define PHY_DELAY_GB_TX_I20 184 //1G delay
@@ -100,34 +100,6 @@ void print_usage( char *arg0 ) {
 		);
 }
 
-int watchdog_setup(OSThreadFactory *thread_factory)
-{
-#ifdef SYSTEMD_WATCHDOG
-	SystemdWatchdogHandler *watchdog = new SystemdWatchdogHandler();
-	OSThread *watchdog_thread = thread_factory->createThread();
-	int watchdog_result;
-	long unsigned int watchdog_interval;
-	watchdog_interval = watchdog->getSystemdWatchdogInterval(&watchdog_result);
-	if (watchdog_result) {
-		GPTP_LOG_INFO("Watchtog interval read from service file: %lu us", watchdog_interval);
-		watchdog->update_interval = watchdog_interval / 2;
-		GPTP_LOG_STATUS("Starting watchdog handler (Update every: %lu us)", watchdog->update_interval);
-		watchdog_thread->start(watchdogUpdateThreadFunction, watchdog);
-		return 0;
-	} else if (watchdog_result < 0) {
-		GPTP_LOG_ERROR("Watchdog settings read error.");
-		delete watchdog;
-		return -1;
-	} else {
-		GPTP_LOG_STATUS("Watchdog disabled");
-		delete watchdog;
-		return 0;
-	}
-#else
-	return 0;
-#endif
-}
-
 static IEEE1588Clock *pClock = NULL;
 static EtherPort *pPort = NULL;
 
@@ -156,7 +128,6 @@ int main(int argc, char **argv)
 	memset(config_file_path, 0, 512);
 
 	GPTPPersist *pGPTPPersist = NULL;
-	LinuxThreadFactory *thread_factory = new LinuxThreadFactory();
 
 	// Block SIGUSR1
 	{
@@ -171,10 +142,22 @@ int main(int argc, char **argv)
 
 	GPTP_LOG_REGISTER();
 	GPTP_LOG_INFO("gPTP starting");
-	if (watchdog_setup(thread_factory) != 0) {
+
+	LinuxThreadFactory *thread_factory = new LinuxThreadFactory();
+
+#ifdef SYSTEMD_WATCHDOG
+	SystemdWatchdogHandler *watchdog = new SystemdWatchdogHandler();
+	if (watchdog->watchdog_setup(thread_factory) != 0) {
 		GPTP_LOG_ERROR("Watchdog handler setup error");
+		delete watchdog;
+		delete thread_factory;
 		return -1;
 	}
+#else
+	// dummy pointer for CLEANUP macro
+	int *watchdog = NULL;
+#endif
+
 	phy_delay_map_t ether_phy_delay;
 	bool input_delay=false;
 
