@@ -66,6 +66,24 @@
 #define PHY_DELAY_MB_TX_I20 1044//100M delay
 #define PHY_DELAY_MB_RX_I20 2133//100M delay
 
+#define CLEANUP()\
+	do {						\
+	delete pPort;				\
+	delete pClock;				\
+	delete ifname;				\
+	delete timestamper;			\
+	delete ipc;					\
+	delete condition_factory;	\
+	delete timer_factory;		\
+	delete lock_factory;		\
+	delete timerq_factory;		\
+	delete default_factory;		\
+	delete thread_factory;		\
+	delete watchdog;			\
+	GPTP_LOG_INFO("Clean up");	\
+	GPTP_LOG_UNREGISTER();		\
+	} while(0)
+
 void gPTPPersistWriteCB(char *bufPtr, uint32_t bufSize);
 
 void print_usage( char *arg0 ) {
@@ -108,7 +126,7 @@ int main(int argc, char **argv)
 	PortInit_t portInit;
 
 	sigset_t set;
-	InterfaceName *ifname;
+	InterfaceName *ifname = NULL;
 	int sig;
 
 	bool syntonize = false;
@@ -183,8 +201,7 @@ int main(int argc, char **argv)
 	portInit.neighborPropDelayThreshold =
 		CommonPort::NEIGHBOR_PROP_DELAY_THRESH;
 
-	LinuxNetworkInterfaceFactory *default_factory =
-		new LinuxNetworkInterfaceFactory;
+	LinuxNetworkInterfaceFactory *default_factory = new LinuxNetworkInterfaceFactory;
 	OSNetworkInterfaceFactory::registerFactory
 		(factory_name_t("default"), default_factory);
 	LinuxTimerQueueFactory *timerq_factory = new LinuxTimerQueueFactory();
@@ -192,10 +209,18 @@ int main(int argc, char **argv)
 	LinuxTimerFactory *timer_factory = new LinuxTimerFactory();
 	LinuxConditionFactory *condition_factory = new LinuxConditionFactory();
 	LinuxSharedMemoryIPC *ipc = new LinuxSharedMemoryIPC();
+
+#ifdef ARCH_INTELCE
+	EtherTimestamper *timestamper = new LinuxTimestamperIntelCE();
+#else
+	EtherTimestamper *timestamper = new LinuxTimestamperGeneric();
+#endif
+
 	/* Create Low level network interface object */
 	if( argc < 2 ) {
-		printf( "Interface name required\n" );
+		GPTP_LOG_ERROR( "Interface name required" );
 		print_usage( argv[0] );
+		CLEANUP();
 		return -1;
 	}
 	ifname = new InterfaceName( argv[1], strlen(argv[1]) );
@@ -241,7 +266,7 @@ int main(int argc, char **argv)
 			}
 			else if( strcmp(argv[i] + 1,  "H") == 0 ) {
 				print_usage( argv[0] );
-				GPTP_LOG_UNREGISTER();
+				CLEANUP();
 				return 0;
 			}
 			else if( strcmp(argv[i] + 1,  "R") == 0 ) {
@@ -269,7 +294,7 @@ int main(int argc, char **argv)
 					{
 						printf("Too many values\n");
 						print_usage( argv[0] );
-						GPTP_LOG_UNREGISTER();
+						CLEANUP();
 						return 0;
 					}
 					phy_delay[delay_count]=atoi(cli_inp_delay);
@@ -280,7 +305,7 @@ int main(int argc, char **argv)
 				{
 					printf("All four delay values must be specified\n");
 					print_usage( argv[0] );
-					GPTP_LOG_UNREGISTER();
+					CLEANUP();
 					return 0;
 				}
 				ether_phy_delay[LINKSPEED_1G].set_delay
@@ -348,11 +373,6 @@ int main(int argc, char **argv)
 		restoredataptr = (char *)restoredata;
 	}
 
-#ifdef ARCH_INTELCE
-	EtherTimestamper *timestamper = new LinuxTimestamperIntelCE();
-#else
-	EtherTimestamper *timestamper = new LinuxTimestamperGeneric();
-#endif
 
 	sigemptyset(&set);
 	sigaddset(&set, SIGINT);
@@ -361,7 +381,7 @@ int main(int argc, char **argv)
 	sigaddset(&set, SIGUSR2);
 	if (pthread_sigmask(SIG_BLOCK, &set, NULL) != 0) {
 		perror("pthread_sigmask()");
-		GPTP_LOG_UNREGISTER();
+		CLEANUP();
 		return -1;
 	}
 
@@ -431,7 +451,7 @@ int main(int argc, char **argv)
 
 	if (!pPort->init_port()) {
 		GPTP_LOG_ERROR("failed to initialize port");
-		GPTP_LOG_UNREGISTER();
+		CLEANUP();
 		return -1;
 	}
 
@@ -484,7 +504,7 @@ int main(int argc, char **argv)
 
 		if (sigwait(&set, &sig) != 0) {
 			perror("sigwait()");
-			GPTP_LOG_UNREGISTER();
+			CLEANUP();
 			return -1;
 		}
 
@@ -522,9 +542,7 @@ int main(int argc, char **argv)
 	pPort->joinLinkWatchThread(linkExitCode);
 	GPTP_LOG_INFO("All threads terminated");
 
-	if( ipc ) delete ipc;
-
-	GPTP_LOG_UNREGISTER();
+	CLEANUP();
 	return 0;
 }
 
