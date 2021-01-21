@@ -78,7 +78,7 @@ struct ClockQuality {
 	unsigned char clockAccuracy; 		/*!< Clock Accuracy - clause 8.6.2.3.
 										  Indicates the expected time accuracy of
 										  a clock master.*/
-	int16_t offsetScaledLogVariance;	/*!< ::Offset Scaled log variance - Clause 8.6.2.4.
+	uint16_t offsetScaledLogVariance;	/*!< ::Offset Scaled log variance - Clause 8.6.2.4.
 										  Is the scaled, offset representation
 										  of an estimate of the PTP variance. The
 										  PTP variance characterizes the

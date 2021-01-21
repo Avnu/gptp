@@ -82,7 +82,7 @@ typedef struct {
 	uint8_t  clock_identity[PTP_CLOCK_IDENTITY_LENGTH];	//!< The clock identity of the interface
 	uint8_t  priority1;				//!< The priority1 field of the grandmaster functionality of the interface, or 0xFF if not supported
 	uint8_t  clock_class;			//!< The clockClass field of the grandmaster functionality of the interface, or 0xFF if not supported
-	int16_t  offset_scaled_log_variance;	//!< The offsetScaledLogVariance field of the grandmaster functionality of the interface, or 0x0000 if not supported
+	uint16_t offset_scaled_log_variance;	//!< The offsetScaledLogVariance field of the grandmaster functionality of the interface, or 0x0000 if not supported
 	uint8_t  clock_accuracy;		//!< The clockAccuracy field of the grandmaster functionality of the interface, or 0xFF if not supported
 	uint8_t  priority2;				//!< The priority2 field of the grandmaster functionality of the interface, or 0xFF if not supported
 	uint8_t  domain_number;			//!< The domainNumber field of the grandmaster functionality of the interface, or 0 if not supported
