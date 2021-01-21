@@ -383,7 +383,11 @@ public:
 	OSCondition *createCondition() const
 	{
 		LinuxCondition *result = new LinuxCondition();
-		return result->initialize() ? result : NULL;
+		if (!result->initialize()) {
+			delete result;
+			result = NULL;
+		}
+		return result;
 	}
 };
 
