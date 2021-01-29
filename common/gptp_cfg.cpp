@@ -165,7 +165,7 @@ int GptpIniParser::iniCallBack(void *user, const char *section, const char *name
         {
             errno = 0;
             char *pEnd;
-            int phdly = strtoul(value, &pEnd, 10);
+            unsigned int phdly = strtoul(value, &pEnd, 10);
             if( *pEnd == '\0' && errno == 0) {
                 valOK = true;
                 parser->_config.phy_delay[LINKSPEED_1G].set_tx_delay( phdly );
@@ -176,7 +176,7 @@ int GptpIniParser::iniCallBack(void *user, const char *section, const char *name
         {
             errno = 0;
             char *pEnd;
-            int phdly = strtoul(value, &pEnd, 10);
+            unsigned int phdly = strtoul(value, &pEnd, 10);
             if( *pEnd == '\0' && errno == 0) {
                 valOK = true;
                 parser->_config.phy_delay[LINKSPEED_1G].set_rx_delay( phdly );
@@ -187,11 +187,10 @@ int GptpIniParser::iniCallBack(void *user, const char *section, const char *name
         {
             errno = 0;
             char *pEnd;
-            int phdly = strtoul(value, &pEnd, 10);
+            unsigned int phdly = strtoul(value, &pEnd, 10);
             if( *pEnd == '\0' && errno == 0) {
                 valOK = true;
-                parser->_config.phy_delay[LINKSPEED_100MB].
-			set_tx_delay( phdly );
+                parser->_config.phy_delay[LINKSPEED_100MB].set_tx_delay( phdly );
             }
         }
 
@@ -199,11 +198,10 @@ int GptpIniParser::iniCallBack(void *user, const char *section, const char *name
         {
             errno = 0;
             char *pEnd;
-            int phdly = strtoul(value, &pEnd, 10);
+            unsigned int phdly = strtoul(value, &pEnd, 10);
             if( *pEnd == '\0' && errno == 0) {
                 valOK = true;
-                parser->_config.phy_delay[LINKSPEED_100MB].
-			set_rx_delay( phdly );
+                parser->_config.phy_delay[LINKSPEED_100MB].set_rx_delay( phdly );
             }
         }
 
@@ -212,18 +210,17 @@ int GptpIniParser::iniCallBack(void *user, const char *section, const char *name
             errno = 0;
             char *pEnd;
             const char *c_pEnd;
-	    uint32_t speed = findSpeedByName( value, &c_pEnd );
-	    if( speed == INVALID_LINKSPEED )
-	    {
-		    speed = strtoul( value, &pEnd, 10 );
-		    c_pEnd = pEnd;
-	    }
-            int ph_tx_dly = strtoul(c_pEnd, &pEnd, 10);
-            int ph_rx_dly = strtoul(pEnd, &pEnd, 10);
+            uint32_t speed = findSpeedByName( value, &c_pEnd );
+            if( speed == INVALID_LINKSPEED )
+            {
+                speed = strtoul( value, &pEnd, 10 );
+                c_pEnd = pEnd;
+            }
+            unsigned int ph_tx_dly = strtoul(c_pEnd, &pEnd, 10);
+            unsigned int ph_rx_dly = strtoul(pEnd, &pEnd, 10);
             if( *pEnd == '\0' && errno == 0) {
                 valOK = true;
-                parser->_config.phy_delay[speed].
-			set_delay( ph_tx_dly, ph_rx_dly );
+                parser->_config.phy_delay[speed].set_delay( ph_tx_dly, ph_rx_dly );
             }
         }
     }
