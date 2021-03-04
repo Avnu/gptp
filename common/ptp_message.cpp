@@ -1250,7 +1250,7 @@ done:
 PTPMessagePathDelayReq::PTPMessagePathDelayReq
 ( EtherPort *port ) : PTPMessageCommon( port )
 {
-	logMeanMessageInterval = 0;
+	logMeanMessageInterval = port->getPDelayInterval();
 	control = MESSAGE_OTHER;
 	messageType = PATH_DELAY_REQ_MESSAGE;
 	sequenceId = port->getNextPDelaySequenceId();
