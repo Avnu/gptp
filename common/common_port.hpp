@@ -279,22 +279,22 @@ typedef struct {
  * @brief Structure for Port Counters
  */
 typedef struct {
-	int32_t ieee8021AsPortStatRxSyncCount;
-	int32_t ieee8021AsPortStatRxFollowUpCount;
-	int32_t ieee8021AsPortStatRxPdelayRequest;
-	int32_t ieee8021AsPortStatRxPdelayResponse;
-	int32_t ieee8021AsPortStatRxPdelayResponseFollowUp;
-	int32_t ieee8021AsPortStatRxAnnounce;
-	int32_t ieee8021AsPortStatRxPTPPacketDiscard;
-	int32_t ieee8021AsPortStatRxSyncReceiptTimeouts;
-	int32_t ieee8021AsPortStatAnnounceReceiptTimeouts;
-	int32_t ieee8021AsPortStatPdelayAllowedLostResponsesExceeded;
-	int32_t ieee8021AsPortStatTxSyncCount;
-	int32_t ieee8021AsPortStatTxFollowUpCount;
-	int32_t ieee8021AsPortStatTxPdelayRequest;
-	int32_t ieee8021AsPortStatTxPdelayResponse;
-	int32_t ieee8021AsPortStatTxPdelayResponseFollowUp;
-	int32_t ieee8021AsPortStatTxAnnounce;
+	uint32_t ieee8021AsPortStatRxSyncCount;
+	uint32_t ieee8021AsPortStatRxFollowUpCount;
+	uint32_t ieee8021AsPortStatRxPdelayRequest;
+	uint32_t ieee8021AsPortStatRxPdelayResponse;
+	uint32_t ieee8021AsPortStatRxPdelayResponseFollowUp;
+	uint32_t ieee8021AsPortStatRxAnnounce;
+	uint32_t ieee8021AsPortStatRxPTPPacketDiscard;
+	uint32_t ieee8021AsPortStatRxSyncReceiptTimeouts;
+	uint32_t ieee8021AsPortStatAnnounceReceiptTimeouts;
+	uint32_t ieee8021AsPortStatPdelayAllowedLostResponsesExceeded;
+	uint32_t ieee8021AsPortStatTxSyncCount;
+	uint32_t ieee8021AsPortStatTxFollowUpCount;
+	uint32_t ieee8021AsPortStatTxPdelayRequest;
+	uint32_t ieee8021AsPortStatTxPdelayResponse;
+	uint32_t ieee8021AsPortStatTxPdelayResponseFollowUp;
+	uint32_t ieee8021AsPortStatTxAnnounce;
 } PortCounters_t;
 
 /**

@@ -72,6 +72,7 @@ CommonPort::CommonPort( PortInit_t *portInit ) :
 	asCapable = false;
 	link_speed = INVALID_LINKSPEED;
 	allow_negative_correction_field = portInit->allowNegativeCorrField;
+	memset(&counters, 0, sizeof(counters));
 }
 
 CommonPort::~CommonPort()
