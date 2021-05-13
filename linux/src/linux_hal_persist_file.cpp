@@ -54,6 +54,7 @@ public:
 		restoredata = ((void *)-1);
 		storedDataLength = 0;
 		memoryDataLength = 0;
+		writeCB = nullptr;
 	}
 
 	~LinuxGPTPPersistFile() {} ;
@@ -117,10 +118,6 @@ public:
 
 	bool triggerWriteStorage(void)
 	{
-		if (!writeCB) {
-			GPTP_LOG_ERROR("Persistent write callback not registered");
-		}
-
 		bool result = false;
 		if (memoryDataLength > storedDataLength) {
 			int ret = ftruncate(persistFD, memoryDataLength);
@@ -142,7 +139,13 @@ public:
 			}
 		}
 
-		writeCB((char *)restoredata, storedDataLength);
+		if (!writeCB) {
+			GPTP_LOG_ERROR("Persistent write callback not registered");
+		}
+		else {
+			writeCB((char *)restoredata, storedDataLength);
+		}
+
 		return result;
 	}
 };
