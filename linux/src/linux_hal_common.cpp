@@ -337,7 +337,7 @@ void LinuxNetworkInterface::watchNetLink( CommonPort *iPort )
 	addr.nl_groups = RTMGRP_LINK;
 
 	if (bind (netLinkSocket, (struct sockaddr *) &addr, sizeof (addr)) < 0) {
-		GPTP_LOG_ERROR("Socket bind failed");
+		GPTP_LOG_ERROR("Socket (netLinkSocket) bind failed %s", strerror(errno));
 		close (netLinkSocket);
 		return;
 	}
@@ -396,6 +396,8 @@ void LinuxNetworkInterface::watchNetLink( CommonPort *iPort )
 			GPTP_LOG_VERBOSE("Net link event timeout");
 		}
 	}
+	close(inetSocket);
+	close(netLinkSocket);
 	GPTP_LOG_DEBUG("Link watch thread terminated ...");
 }
 
