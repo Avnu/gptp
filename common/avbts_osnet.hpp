@@ -172,6 +172,7 @@ class InterfaceName: public InterfaceLabel {
 	InterfaceName(char *name, int length) {
 		this->name = new char[length + 1];
 		PLAT_strncpy(this->name, name, length);
+		this->name[length] = '\0';
 	}
 	~InterfaceName() {
 		delete(this->name);
