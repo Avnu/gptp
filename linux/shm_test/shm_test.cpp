@@ -113,7 +113,7 @@ int main(int argc, char *argv[])
             (unsigned int) ptpData->clock_identity[6], (unsigned int) ptpData->clock_identity[7]);
     fprintf(stdout, "priority1 %u\n", (unsigned int) ptpData->priority1);
     fprintf(stdout, "clock_class %u\n", (unsigned int) ptpData->clock_class);
-    fprintf(stdout, "offset_scaled_log_variance %d\n", (unsigned int) ptpData->offset_scaled_log_variance);
+    fprintf(stdout, "offset_scaled_log_variance %u\n", (unsigned int) ptpData->offset_scaled_log_variance);
     fprintf(stdout, "clock_accuracy %u\n", (unsigned int) ptpData->clock_accuracy);
     fprintf(stdout, "priority2 %u\n", (unsigned int) ptpData->priority2);
     fprintf(stdout, "domain_number %u\n", (unsigned int) ptpData->domain_number);
