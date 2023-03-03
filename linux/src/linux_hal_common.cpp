@@ -994,7 +994,7 @@ bool LinuxSharedMemoryIPC::update_network_interface(
 	uint8_t  clock_identity[],
 	uint8_t  priority1,
 	uint8_t  clock_class,
-	int16_t  offset_scaled_log_variance,
+	uint16_t  offset_scaled_log_variance,
 	uint8_t  clock_accuracy,
 	uint8_t  priority2,
 	uint8_t  domain_number,
