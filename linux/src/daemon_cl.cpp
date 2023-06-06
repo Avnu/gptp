@@ -517,7 +517,7 @@ int main(int argc, char **argv)
 		if (sig == SIGUSR2) {
 			pPort->logIEEEPortCounters();
 		}
-	} while (sig == SIGHUP || sig == SIGUSR2);
+	} while (sig == SIGUSR2);
 
 	GPTP_LOG_ERROR("Exiting on %d", sig);
 
