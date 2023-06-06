@@ -49,8 +49,8 @@ endif
 CPPFLAGS_G = $(CFLAGS_G) -std=c++0x -Wnon-virtual-dtor
 LDFLAGS_G = 
 
-COMMON_DIR = ../../common
-SRC_DIR = ../src
+COMMON_DIR = $(abspath ../../common)
+SRC_DIR = $(abspath ../src)
 OBJ_DIR = obj
 
 OBJ_FILES = $(OBJ_DIR)/ptp_message.o\
