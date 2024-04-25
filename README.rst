@@ -58,7 +58,7 @@ To execute, run
 such as
 	./daemon_cl eth0
 
-The daemon creates a shared memory segment with the 'ptp' group. Some distributions may not have this group installed.  The IPC interface will not available unless the 'ptp' group is available.
+The daemon creates a shared memory segment with the 'ptp' group. Some distributions may not have this group installed.  The IPC interface will not be available unless the 'ptp' group is available.
 
 
 Windows Specific
