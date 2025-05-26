@@ -218,7 +218,7 @@ class InterfaceName: public InterfaceLabel {
 		if(string == NULL)
 			return false;
 
-		if (length >= strlen(name) + 1) {
+		if (length >= strlen(name)) {
 			PLAT_strncpy(string, name, length);
 			return true;
 		}
